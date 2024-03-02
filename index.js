@@ -26,7 +26,7 @@ app.get('/search', async (req, res) => {
           
         }
         if (Rooms) {
-            hotels = hotels.filter(hotel => hotel.Rooms === parseInt(Rooms));
+            hotels = hotels.filter(hotel => hotel.Rooms >= parseInt(Rooms));
         }
         if (Language) {
             hotels = hotels.filter(hotel => hotel.Language.toLowerCase().includes(Language.toLowerCase()));
