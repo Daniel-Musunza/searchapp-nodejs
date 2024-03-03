@@ -38,21 +38,14 @@ GET /search - Endpoint to search hotels based on provided parameters.
 
 
 ## Parameters
-HotelName - Filter hotels by name.
-Rooms - Filter hotels by the number of available rooms.
+Rooms [Adults, Children, ChildrenAge] - Filter hotels by the number of available rooms.
 Language - Filter hotels by language.
 Location - Filter hotels by location.
 HotelType - Filter hotels by type.
 Rating - Filter hotels by rating.
 Country - Filter hotels by country.
-checkIn and checkOut - Filter hotels by available dates.
+DateFrom and DateTo - Filter hotels by available dates.
 
 
-## Example
-To search for hotels with a specific name:
-
-sql
-Copy code
-GET /search?HotelName=Hotel 1
 
 

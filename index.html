@@ -8,17 +8,18 @@
 <body>
     <h2>Hotel Search</h2>
     <form action="http://localhost:3000/search" method="get">
-        <label for="HotelName">Hotel Name:</label>
-        <input type="text" id="HotelName" name="HotelName"><br><br>
         
-        <label for="Rooms">Rooms:</label>
-        <input type="number" id="Rooms" name="Rooms" ><br><br>
-        
+        <label for="Adults">Adults:</label>
+        <input type="number" id="Adults" name="Adults" required ><br><br>
+
+        <label for="Children">Children:</label>
+        <input type="number" id="Children" name="Children" required><br><br>
+
         <label for="Language">Language:</label>
-        <input type="text" id="Language" name="Language" ><br><br>
+        <input type="text" id="Language" name="Language"  required ><br><br>
         
         <label for="Location">Location:</label>
-        <input type="text" id="Location" name="Location"><br><br>
+        <input type="text" id="Location" name="Location"  required><br><br>
         
         <label for="HotelType">Hotel Type:</label>
         <input type="text" id="HotelType" name="HotelType"><br><br>
@@ -29,11 +30,11 @@
         <label for="Country">Country:</label>
         <input type="text" id="Country" name="Country"><br><br>
         
-        <label for="checkIn">Check-in Date:</label>
-        <input type="date" id="checkIn" name="checkIn"><br><br>
+        <label for="DateFrom">Check-in Date:</label>
+        <input type="date" id="DateFrom" name="DateFrom"  required><br><br>
         
-        <label for="checkOut">Check-out Date:</label>
-        <input type="date" id="checkOut" name="checkOut" ><br><br>
+        <label for="DateTo">Check-out Date:</label>
+        <input type="date" id="DateTo" name="DateTo"  required><br><br>
         
         <button type="submit">Search</button>
     </form>

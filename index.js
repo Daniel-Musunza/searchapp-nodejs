@@ -1,6 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 const path = require('path');
+const { parseString } = require('xml2js');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -8,55 +9,64 @@ const PORT = process.env.PORT || 3000;
 app.use(express.static(path.join(__dirname)));
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname,'index.html'));
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 // Endpoint to search hotels
 app.get('/search', async (req, res) => {
     try {
-        const { HotelName, Rooms, Language, Location, HotelType, Rating, Country, checkIn, checkOut } = req.query;
+        const { Adults, Children, Language, Location, HotelType, Rating, Country, DateFrom, DateTo } = req.query;
 
-        // Fetch hotels data from the API
-        const response = await axios.get('https://hotelsapi-va2v.onrender.com/api/hotels');
-        let hotels = response.data;
+        const xmlRequest = `
+                <SearchHotelsRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                    <Username>liyanahotels</Username>
+                    <Password>@60033*</Password>
+                    <DateFrom>2024-04-01</DateFrom>
+                    <DateTo>2024-04-10</DateTo>
+                    <Rooms>
+                        <Room Adults="2" Children="0" ChildrenAges="" />
+                    </Rooms>
+                    <Language>en</Language>
+                    <IsOptimized>true</IsOptimized>
+                    <UseTariff>false</UseTariff>
+                </SearchHotelsRequest>
+            `;
 
-        
-        // Filter hotels based on the provided parameters
-        if (HotelName) {
-            hotels = hotels.filter(hotel => hotel.HotelName.toLowerCase().includes(HotelName.toLowerCase()));
-          
-        }
-        if (Rooms) {
-            hotels = hotels.filter(hotel => hotel.Rooms >= parseInt(Rooms));
-        }
-        if (Language) {
-            hotels = hotels.filter(hotel => hotel.Language.toLowerCase().includes(Language.toLowerCase()));
-        }
-        if (Location) {
-            hotels = hotels.filter(hotel => hotel.Location.toLowerCase().includes(Location.toLowerCase()));
-        }
-        if (HotelType) {
-            hotels = hotels.filter(hotel => hotel.HotelType.toLowerCase().includes(HotelType.toLowerCase()));
-        }
-        if (Rating) {
-            hotels = hotels.filter(hotel => hotel.Rating.toLowerCase().includes(Rating.toLowerCase()));
-        }
-        if (Country) {
-            hotels = hotels.filter(hotel => hotel.Country.toLowerCase().includes(Country.toLowerCase()));
-        }
-        if (checkIn && checkOut) {
-            // Assuming available dates are in the format "checkIn to checkOut"
-            hotels = hotels.filter(hotel => {
-                const availableDates = hotel['Available dates'];
-                return availableDates && availableDates.includes(checkIn) && availableDates.includes(checkOut);
+        try {
+            // Send POST request to API
+            const response = await axios.post('https://xml.avra.vacations/services/webservice.asmx?op=HotelsSearch', xmlRequest, {
+                headers: {
+                    'Content-Type': 'text/xml',
+                },
             });
-        }
 
-        res.json(hotels);
+            // Parse XML response
+            const jsonData = await parseXMLResponse(response.data);
+
+            // Send JSON response
+            res.json(jsonData);
+        } catch (error) {
+            console.error('Error:', error.message);
+            console.error('Response:', error.response.data); // Log response data for debugging
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
     } catch (error) {
         console.error('Error:', error.message);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
+// Function to parse XML response
+async function parseXMLResponse(xmlData) {
+    return new Promise((resolve, reject) => {
+        parseString(xmlData, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
